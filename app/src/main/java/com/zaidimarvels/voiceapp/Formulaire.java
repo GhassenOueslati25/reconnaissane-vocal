@@ -27,7 +27,7 @@ public class Formulaire extends AppCompatActivity {
     private SpeechRecognizer speechRecog;
     private EditText text1,text2,text3,text4;
     List<String> resultss;
-
+    private final int REQ_CODE_SPEECH_INPUT = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -113,6 +113,7 @@ public class Formulaire extends AppCompatActivity {
 
 
 
+
                 }
 
 
@@ -120,6 +121,7 @@ public class Formulaire extends AppCompatActivity {
 
             }
         } );
+
     }
 
     private void speak(String message) {
@@ -139,25 +141,36 @@ public class Formulaire extends AppCompatActivity {
 
 
       resultss.add( result_message );
-
-
     result_message = result_message.toLowerCase();
+
     if (resultss.size() == 1){
 
         text1.setText( resultss.get( 0 ) );
-        speak( "complete the last name" );
+        speak( "complete your password" );
     }else if (resultss.size() == 2){
         text2.setText( resultss.get( 1 ) );
+        speak( "complete the last name" );
+
     }else if (resultss.size() == 3){
         text3.setText( resultss.get( 2 ) );
-    }else if (resultss.size() == 4){
-        text4.setText( resultss.get( 3 ) );
+        speak( "complete your adress" );
+
+    } else if (resultss.size() == 4){
+        text4.setText( resultss.get( 3) );
+
+            speak("Opening Form");
+            Intent intent = new Intent(Formulaire.this,Accueil.class);
+            startActivity(intent);
+
     }
 
-    onResume();
+
+    }
 
 
-        }
+
+
+
 
 
     @Override
@@ -165,7 +178,6 @@ public class Formulaire extends AppCompatActivity {
         super.onResume();
 //        Reinitialize the recognizer and tts engines upon resuming from background such as after openning the browser
         initializeSpeechRecognizer();
-        initializeTextToSpeech();
     }
 
 
