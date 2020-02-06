@@ -34,9 +34,8 @@ public class Accueil extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_accueil);
+
 
 
 
@@ -138,16 +137,13 @@ public class Accueil extends AppCompatActivity {
         result_message = result_message.toLowerCase();
 
         if(result_message.indexOf("ok ") != -1){
-            if(result_message.indexOf("good") != -1){
-                speak("welcome , can i help you ");
-                onStart();
-            }
+
             if (result_message.indexOf("ok time") != -1){
                 String time_now = DateUtils.formatDateTime(this, new Date().getTime(),DateUtils.FORMAT_SHOW_TIME);
                 speak("The time is now: " + time_now);
                 onStart();
             }
-        } else if (result_message.indexOf("welcome") != -1){
+        } else if (result_message.indexOf("tuesday") != -1){
             speak("Opening Form");
             Intent intent = new Intent(Accueil.this,Formulaire.class);
             startActivity(intent);
@@ -167,7 +163,7 @@ public class Accueil extends AppCompatActivity {
                     finish();
                 } else {
                     tts.setLanguage(Locale.US);
-                    speak("Hello there, what's your password");
+                    speak("whats your destination right now");
                 }
             }
         });

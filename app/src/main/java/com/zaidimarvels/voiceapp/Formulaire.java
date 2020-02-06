@@ -13,7 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 
@@ -25,6 +30,7 @@ import java.util.Locale;
 public class Formulaire extends AppCompatActivity {
     private TextToSpeech tts;
     private SpeechRecognizer speechRecog;
+    private TextView t1;
     private EditText text1,text2,text3,text4;
     List<String> resultss;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -32,7 +38,7 @@ public class Formulaire extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_formulaire2 );
-
+        t1 =findViewById( R.id.textView );
 
         resultss = new ArrayList<>();
 
@@ -155,20 +161,34 @@ public class Formulaire extends AppCompatActivity {
         text3.setText( resultss.get( 2 ) );
         speak( "complete your adress" );
 
-    } else if (resultss.size() == 4){
-        text4.setText( resultss.get( 3) );
+    } else if (resultss.size() >= 4) {
+        text4.setText( resultss.get( 3 ) );
+        speak( "are you sure to send your information" );
 
-            speak("Opening Form");
-            Intent intent = new Intent(Formulaire.this,Accueil.class);
-            startActivity(intent);
+
+        if (result_message.indexOf( "welcome" ) != -1) {
+            speak( "Opening class" );
+            Intent intent = new Intent( Formulaire.this, Accueil.class );
+            startActivity( intent );
+
+        } else if (result_message.indexOf( "android" ) != -1) {
+            speak( "what do you want to change" );
+
+
+
+            }
+        if (result_message.indexOf( "name" ) != -1) {
+
+
+            text1.setText( resultss.get(4) );
+            speak( "Complete the name"+resultss.get(4) );
+
+
+        }
+        }
+
 
     }
-
-
-    }
-
-
-
 
 
 
@@ -178,6 +198,7 @@ public class Formulaire extends AppCompatActivity {
         super.onResume();
 //        Reinitialize the recognizer and tts engines upon resuming from background such as after openning the browser
         initializeSpeechRecognizer();
+        initializeTextToSpeech();
     }
 
 
