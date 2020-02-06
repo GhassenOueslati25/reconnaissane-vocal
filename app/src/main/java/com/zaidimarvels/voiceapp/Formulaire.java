@@ -34,6 +34,13 @@ public class Formulaire extends AppCompatActivity {
     private EditText text1,text2,text3,text4;
     List<String> resultss;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+
+    boolean modify = false;
+    boolean lastname = false;
+    boolean firstname = false;
+    boolean password = false;
+    boolean adress = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -165,28 +172,60 @@ public class Formulaire extends AppCompatActivity {
         text4.setText( resultss.get( 3 ) );
         speak( "are you sure to send your information" );
 
-
-        if (result_message.indexOf( "welcome" ) != -1) {
+        if (result_message.indexOf("welcome") != -1) {
             speak( "Opening class" );
-            Intent intent = new Intent( Formulaire.this, Accueil.class );
+            Intent intent = new Intent( Formulaire.this, MainActivity.class );
             startActivity( intent );
 
-        } else if (result_message.indexOf( "android" ) != -1) {
+        } else if (result_message.indexOf("android") != -1) {
             speak( "what do you want to change" );
+            modify = true;
 
+        }else if(modify){
+            if (result_message.indexOf( "last name" )!= -1){
+                speak( "ok enter the last name" );
+                lastname = true;
+            }else if (lastname){
+                int nb = resultss.size();
+                text3.setText( resultss.get( nb - 1)) ;
+                resultss.set( 2, resultss.get( nb - 1) );
+                lastname = false;
+            }
 
+            if (result_message.indexOf( "first name" )!= -1){
+                speak( "ok enter the first name" );
+                firstname = true;
+            }else if (firstname){
+                int nb = resultss.size();
+                text1.setText( resultss.get( nb - 1)) ;
+                resultss.set( 0, resultss.get( nb - 1) );
+                firstname = false;
+            }
+            if (result_message.indexOf( "password" )!= -1){
+                speak( "ok enter the password" );
+                password = true;
+            }else if (password){
+                int nb = resultss.size();
+                text2.setText( resultss.get( nb - 1)) ;
+                resultss.set( 1, resultss.get( nb - 1) );
+                password = false;
 
             }
-        if (result_message.indexOf( "name" ) != -1) {
+            if (result_message.indexOf( "adress" )!= -1){
+                speak( "ok enter your adress" );
+                adress = true;
+            }else if (adress){
+                int nb = resultss.size();
+                text4.setText( resultss.get( nb - 1)) ;
+                resultss.set( 3, resultss.get( nb - 1) );
+                adress = false;
+            }
+            else speak( "i don't undrestand" );
+        }
 
-
-            text1.setText( resultss.get(4) );
-            speak( "Complete the name"+resultss.get(4) );
 
 
         }
-        }
-
 
     }
 
