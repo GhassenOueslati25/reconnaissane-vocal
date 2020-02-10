@@ -12,7 +12,11 @@ import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +35,12 @@ public class Formulaire extends AppCompatActivity {
     private TextToSpeech tts;
     private SpeechRecognizer speechRecog;
     private TextView t1;
-    private EditText text1,text2,text3,text4;
+    private EditText text1, text2, text3, text4;
     List<String> resultss;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+
+    private Spinner spinnerAction;
+    String[] cityname = {"François dupont", "Cathrine", "Bruno", "Mario", "Frank"};
 
     boolean modify = false;
     boolean lastname = false;
@@ -45,20 +52,31 @@ public class Formulaire extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_formulaire2 );
-        t1 =findViewById( R.id.textView );
+        t1 = findViewById( R.id.textView );
 
         resultss = new ArrayList<>();
 
-        text1=findViewById( R.id.editText );
-        text2=findViewById( R.id.editText2 );
-        text3=findViewById( R.id.editText3 );
-        text4=findViewById( R.id.editText4 );
+        text1 = findViewById( R.id.editText );
+        text2 = findViewById( R.id.editText2 );
+        text3 = findViewById( R.id.editText3 );
+        text4 = findViewById( R.id.editText4 );
+
+        spinnerAction = (Spinner) findViewById( R.id.spinner );
 
         initializeSpeechRecognizer();
         initializeTextToSpeech();
 
 
+        ArrayAdapter adapterspinner = new ArrayAdapter( this, android.R.layout.simple_spinner_item, cityname );
+        adapterspinner.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+        spinnerAction.setAdapter( adapterspinner );
+
     }
+
+
+
+
+
 
     private void initializeSpeechRecognizer() {
         if (SpeechRecognizer.isRecognitionAvailable( this )) {
@@ -168,8 +186,10 @@ public class Formulaire extends AppCompatActivity {
         text3.setText( resultss.get( 2 ) );
         speak( "complete your adress" );
 
+
     } else if (resultss.size() >= 4) {
         text4.setText( resultss.get( 3 ) );
+
         speak( "are you sure to send your information" );
 
         if (result_message.indexOf("welcome") != -1) {
@@ -220,7 +240,7 @@ public class Formulaire extends AppCompatActivity {
                 resultss.set( 3, resultss.get( nb - 1) );
                 adress = false;
             }
-            else speak( "i don't undrestand" );
+
         }
 
 

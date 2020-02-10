@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         result_message = result_message.toLowerCase();
 
         if(result_message.indexOf("ok ") != -1){
-            if(result_message.indexOf("morning") != -1){
+            if(result_message.indexOf(" good morning") != -1){
                 speak("welcome , can i help you ");
                 onStart();
             }
@@ -211,4 +211,6 @@ public class MainActivity extends AppCompatActivity {
         initializeSpeechRecognizer();
         initializeTextToSpeech();
     }
+
+
 }
