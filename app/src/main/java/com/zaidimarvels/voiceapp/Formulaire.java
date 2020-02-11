@@ -3,26 +3,26 @@ package com.zaidimarvels.voiceapp;
 
 import android.content.Intent;
 
+import android.graphics.Color;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.view.View;
-import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 
@@ -32,6 +32,8 @@ import java.util.Locale;
 
 
 public class Formulaire extends AppCompatActivity {
+    String[] language ={"C","C++","Java",".NET","iPhone","Android","ASP.NET","PHP"};
+
     private TextToSpeech tts;
     private SpeechRecognizer speechRecog;
     private TextView t1;
@@ -52,7 +54,7 @@ public class Formulaire extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_formulaire2 );
-        t1 = findViewById( R.id.textView );
+
 
         resultss = new ArrayList<>();
 
@@ -63,9 +65,16 @@ public class Formulaire extends AppCompatActivity {
 
         spinnerAction = (Spinner) findViewById( R.id.spinner );
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this,android.R.layout.select_dialog_item,language);
+        //Getting the instance of AutoCompleteTextView
+        AutoCompleteTextView actv =  (AutoCompleteTextView)findViewById(R.id.autoCompleteTextView);
+        actv.setThreshold(1);//will start working from first character
+        actv.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+        actv.setTextColor( Color.RED);
+
         initializeSpeechRecognizer();
         initializeTextToSpeech();
-
 
         ArrayAdapter adapterspinner = new ArrayAdapter( this, android.R.layout.simple_spinner_item, cityname );
         adapterspinner.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
@@ -74,13 +83,11 @@ public class Formulaire extends AppCompatActivity {
     }
 
 
-
-
-
-
     private void initializeSpeechRecognizer() {
+
         if (SpeechRecognizer.isRecognitionAvailable( this )) {
             speechRecog = SpeechRecognizer.createSpeechRecognizer( this );
+
             speechRecog.setRecognitionListener( new RecognitionListener() {
                 @Override
                 public void onReadyForSpeech(Bundle params) {
@@ -132,41 +139,60 @@ public class Formulaire extends AppCompatActivity {
     }
 
   private void initializeTextToSpeech() {
+
         tts = new TextToSpeech( this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (tts.getEngines().size() == 0) {
-                    Toast.makeText( Formulaire.this, getString( R.string.tts_no_engines ), Toast.LENGTH_LONG ).show();
-                    finish();
+
                 } else {
                     tts.setLanguage( Locale.US );
                     speak( "Complete the name" );
-
-
-
-
                 }
-
-
-
-
             }
         } );
 
     }
 
     private void speak(String message) {
+
+
         if (Build.VERSION.SDK_INT >= 21) {
             tts.speak( message, TextToSpeech.QUEUE_FLUSH, null, null );
         } else {
             tts.speak( message, TextToSpeech.QUEUE_FLUSH, null );
+
         }
-        Intent intent = new Intent( RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
-        speechRecog.startListening(intent);
+        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,new Long( 20000 ));
+
+        //Intent intent = new Intent( RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        //
+        //intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 5000);
+        //intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 15000);
+        //intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
+        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,Locale.getDefault());
+        //startActivityForResult( intent, 0 );
+
+       speechRecog.startListening(intent);
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult( requestCode, resultCode, data );
+
+        if (requestCode == 0){
+            if (resultCode == RESULT_OK){
+                List<String> result_arr = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                processResult( result_arr.get( 0 ));
+            }
+        }
+    }
 
     private void processResult(String result_message ) {
 
@@ -187,10 +213,16 @@ public class Formulaire extends AppCompatActivity {
         speak( "complete your adress" );
 
 
-    } else if (resultss.size() >= 4) {
-        text4.setText( resultss.get( 3 ) );
 
-        speak( "are you sure to send your information" );
+    }else if (resultss.size() == 4) {
+        text4.setText( resultss.get( 3 ) );
+        speak( "select your shareholder" );
+        spinnerAction.performClick();
+    }
+
+    else if (resultss.size()>=5){
+
+            speak( "are you sure to send your information" );
 
         if (result_message.indexOf("welcome") != -1) {
             speak( "Opening class" );

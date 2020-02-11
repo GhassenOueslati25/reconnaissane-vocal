@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onEvent(int eventType, Bundle params) {
 
+
                 }
             });
         }
