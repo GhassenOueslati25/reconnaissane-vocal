@@ -41,9 +41,10 @@ public class Formulaire extends AppCompatActivity {
     List<String> resultss;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     AutoCompleteTextView autoCompleteTextView;
+    private static Intent intent;
 
-    private Spinner spinnerAction;
-    String[] cityname = {"François dupont", "Cathrine", "Bruno", "Mario", "Frank"};
+
+
 
     boolean modify = false;
     boolean lastname = false;
@@ -115,6 +116,7 @@ public class Formulaire extends AppCompatActivity {
 
                 @Override
                 public void onError(int error) {
+                    speechRecog.startListening(intent);
 
                 }
 
@@ -163,7 +165,8 @@ public class Formulaire extends AppCompatActivity {
 
         }
 
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
 
@@ -212,11 +215,11 @@ public class Formulaire extends AppCompatActivity {
 
     }else if (resultss.size() == 5) {
 
-        if (result_message!= "Cathrine,François dupon,Bruno,Mario" ){
-            autoCompleteTextView.setText( resultss.get( 4 ) );
+        if ("Android"== result_message ){
 
-        }
-       else speak( "repeat your choise" );
+            autoCompleteTextView.setText( resultss.get(4) );
+
+        } else speak( "repeat your choise" );
 
 
     }
@@ -225,12 +228,12 @@ public class Formulaire extends AppCompatActivity {
 
             speak( "are you sure to send your information" );
 
-        if (result_message.indexOf("welcome") != -1) {
-            speak( "Opening class" );
+        if ("send information".indexOf(result_message) != -1) {
+            speak( "ok" );
             Intent intent = new Intent( Formulaire.this, MainActivity.class );
             startActivity( intent );
 
-        } else if (result_message.indexOf("android") != -1) {
+        } else if ("non".indexOf(result_message) != -1) {
             speak( "what do you want to change" );
             modify = true;
 

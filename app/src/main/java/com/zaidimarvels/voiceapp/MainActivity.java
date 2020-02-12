@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private TextToSpeech tts;
     private SpeechRecognizer speechRecog;
+    private static Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +66,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         } else {
-            // Permission has already been granted
-            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 
+
+            // Permission has already been granted
+             intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
             speechRecog.startListening(intent);
         }
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         if (SpeechRecognizer.isRecognitionAvailable(this)) {
             speechRecog = SpeechRecognizer.createSpeechRecognizer(this);
             speechRecog.setRecognitionListener(new RecognitionListener() {
+
                 @Override
                 public void onReadyForSpeech(Bundle params) {
 
@@ -108,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(int error) {
+                    speechRecog.startListening(intent);
 
                 }
 
@@ -134,17 +140,17 @@ public class MainActivity extends AppCompatActivity {
     private void processResult(String result_message) {
         result_message = result_message.toLowerCase();
 
-        if(result_message.indexOf("ok ") != -1){
-            if(result_message.indexOf(" good morning") != -1){
+        if("ok calipro".indexOf(result_message) != -1){
+
                 speak("welcome , can i help you ");
                 onStart();
-            }
-            if (result_message.indexOf("ok time") != -1){
+
+            if ("ok time".indexOf(result_message) != -1){
                 String time_now = DateUtils.formatDateTime(this, new Date().getTime(),DateUtils.FORMAT_SHOW_TIME);
                 speak("The time is now: " + time_now);
                 onStart();
             }
-        } else if (result_message.indexOf("welcome") != -1){
+        } else if ("open".indexOf(result_message) != -1){
             speak("Opening Form");
             Intent intent = new Intent(MainActivity.this,Formulaire.class);
             startActivity(intent);
@@ -154,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             onStart();
         }
     }
+
 
     private void initializeTextToSpeech() {
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -171,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void speak(String message) {
+
 
         if(Build.VERSION.SDK_INT >= 21){
             tts.speak(message,TextToSpeech.QUEUE_FLUSH,null,null);
