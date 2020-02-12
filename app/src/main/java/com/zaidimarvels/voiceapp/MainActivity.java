@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             // Permission has already been granted
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
             speechRecog.startListening(intent);
         }
@@ -170,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void speak(String message) {
+
         if(Build.VERSION.SDK_INT >= 21){
             tts.speak(message,TextToSpeech.QUEUE_FLUSH,null,null);
         } else {

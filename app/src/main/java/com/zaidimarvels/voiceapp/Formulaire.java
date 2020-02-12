@@ -40,6 +40,7 @@ public class Formulaire extends AppCompatActivity {
     private EditText text1, text2, text3, text4;
     List<String> resultss;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    AutoCompleteTextView autoCompleteTextView;
 
     private Spinner spinnerAction;
     String[] cityname = {"François dupont", "Cathrine", "Bruno", "Mario", "Frank"};
@@ -63,22 +64,20 @@ public class Formulaire extends AppCompatActivity {
         text3 = findViewById( R.id.editText3 );
         text4 = findViewById( R.id.editText4 );
 
-        spinnerAction = (Spinner) findViewById( R.id.spinner );
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
                 (this,android.R.layout.select_dialog_item,language);
         //Getting the instance of AutoCompleteTextView
-        AutoCompleteTextView actv =  (AutoCompleteTextView)findViewById(R.id.autoCompleteTextView);
-        actv.setThreshold(1);//will start working from first character
-        actv.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
-        actv.setTextColor( Color.RED);
+        autoCompleteTextView =  (AutoCompleteTextView)findViewById(R.id.autoCompleteTextView);
+        autoCompleteTextView.setThreshold(1);//will start working from first character
+        autoCompleteTextView.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
+        autoCompleteTextView.setTextColor( Color.RED);
 
         initializeSpeechRecognizer();
         initializeTextToSpeech();
 
-        ArrayAdapter adapterspinner = new ArrayAdapter( this, android.R.layout.simple_spinner_item, cityname );
-        adapterspinner.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-        spinnerAction.setAdapter( adapterspinner );
+
 
     }
 
@@ -167,16 +166,8 @@ public class Formulaire extends AppCompatActivity {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,new Long( 20000 ));
 
-        //Intent intent = new Intent( RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        //
-        //intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 5000);
-        //intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 15000);
-        //intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
-        //intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,Locale.getDefault());
-        //startActivityForResult( intent, 0 );
+
 
        speechRecog.startListening(intent);
 
@@ -208,19 +199,29 @@ public class Formulaire extends AppCompatActivity {
         text2.setText( resultss.get( 1 ) );
         speak( "complete the last name" );
 
-    }else if (resultss.size() == 3){
+    }else if (resultss.size() == 3) {
         text3.setText( resultss.get( 2 ) );
         speak( "complete your adress" );
 
 
+    } else if (resultss.size() == 4){
+        text4 .setText( resultss.get( 3 ) );
+        speak( "complete your choise" );
 
-    }else if (resultss.size() == 4) {
-        text4.setText( resultss.get( 3 ) );
-        speak( "select your shareholder" );
-        spinnerAction.performClick();
+
+
+    }else if (resultss.size() == 5) {
+
+        if (result_message!= "Cathrine,François dupon,Bruno,Mario" ){
+            autoCompleteTextView.setText( resultss.get( 4 ) );
+
+        }
+       else speak( "repeat your choise" );
+
+
     }
 
-    else if (resultss.size()>=5){
+    else if (resultss.size()>=6){
 
             speak( "are you sure to send your information" );
 
